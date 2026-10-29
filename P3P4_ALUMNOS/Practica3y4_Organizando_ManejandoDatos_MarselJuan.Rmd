@@ -323,6 +323,7 @@ fecha de entrada en lista.
 ```{r}
 raw%>%pivot_longer(.,names_to = 'week',values_to = 'rank',cols=-c(year,artist, track, time,date.entered), names_prefix='wk')
 
+raw_billboard_tidy<-raw%>%pivot_longer(.,names_to = 'week',values_to = 'rank',cols=-c(year,artist, track, time,date.entered), names_prefix='wk')
 
 
 ```
@@ -460,7 +461,7 @@ data frames: `flights` y `planes`.
 
 library(dplyr)
 #library(dbplyr)
-rm(list=ls())
+
 load("./data/VuelosNY.Rdata")
 ```
 
@@ -536,8 +537,6 @@ levels(planes$manufacturer)
 
 planes.f<-planes%>%filter(.,!grepl('MCDONELL DOUGLAS',manufacturer))%>%filter(.,seats>=90 & seats<=210)%>%mutate(manufacturer=case_when(grepl('AIRBUS',manufacturer) ~'AIRBUS COMP',TRUE~manufacturer))
 
-#cambio airbus
-
 ```
 
 ### Ejercicio 7
@@ -549,7 +548,7 @@ ello utiliza algunas de las funciones de **XXX_join** y la variable
 
 ```{r }
 flights.f <- flights %>%
-  inner_join(planes.f, by = "tailnum")
+  inner_join(.,planes.f, by = "tailnum")
 ```
 
 ### Ejercicio 8
@@ -597,7 +596,6 @@ library(tidyr)
 
 flights <- flights %>%
   unite("Full_Date", day, month, year.x, sep = "-", remove = TRUE)
-
 ```
 
 ### Ejercicio 11
@@ -650,8 +648,30 @@ de la canción (`track`), y en la tabla de ranking solo usaremos este
 identificador en lugar del nombre de la canción.
 
 ```{r}
+canciones <- unique(
+  raw_billboard_tidy[, c("artist", "track", "time")]
+)
+
+canciones$id <- seq_len(nrow(canciones))
+
+ranking <- unique(
+  raw_billboard_tidy[, c("track", "week", "rank")]
+)
+
+canciones$id <- seq_len(nrow(canciones))
+
+```
 
 
+```{r}
+ranking <- raw_billboard_tidy %>%
+  select(track, week, rank) %>%
+  unique() %>%
+  left_join(
+    canciones %>% select(track, id),
+    by = "track"
+  ) %>%
+  select(id, week, rank)
 
 ```
 
@@ -678,8 +698,11 @@ necesarias para obtener **table1** a partir de **table5**. También deben
 coincidir los tipos de datos de las columnas.
 
 ```{r}
+library(tidyr)
+table1
+table5
 
-
+table5%>%unite(.,'year',century,year,sep='')%>%separate(.,rate,c('cases','population'),sep='/')
 ```
 
 ## DPLYR
@@ -700,7 +723,7 @@ variables que tiene que contener la tabla final (`Total_distance`,
 funciones.
 
 ```{r }
-
+Distance_Manufacturer_model<-
 ```
 
 ### Ejercicio Extra 4
