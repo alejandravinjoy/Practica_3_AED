@@ -534,7 +534,7 @@ bajo la denominación `"AIRBUS COMP"`.
 planes$manufacturer<-as.factor(planes$manufacturer)
 levels(planes$manufacturer)
 
-planes.f<-planes%>%filter(.,!grepl('MCDONELL DOUGLAS',manufacturer))%>%filter(.,seats>=90 & seats<=210)%>%mutate(manufacturer=case_when(grepl('AIRBUS',manufacturer) ~'AIRBUS COMP'))
+planes.f<-planes%>%filter(.,!grepl('MCDONELL DOUGLAS',manufacturer))%>%filter(.,seats>=90 & seats<=210)%>%mutate(manufacturer=case_when(grepl('AIRBUS',manufacturer) ~'AIRBUS COMP',TRUE~manufacturer))
 
 #cambio airbus
 
@@ -548,8 +548,8 @@ ello utiliza algunas de las funciones de **XXX_join** y la variable
 `tailnum` que es común en ambos data frames.
 
 ```{r }
-
-
+flights.f <- flights %>%
+  inner_join(planes.f, by = "tailnum")
 ```
 
 ### Ejercicio 8
@@ -558,7 +558,8 @@ Reasigna los nombres de los data frames `planes.f` y `flights.f` a los
 nombres originales `planes` y `flights`.
 
 ```{r }
-
+planes <- planes.f
+flights <- flights.f
 ```
 
 ### Ejercicio 9
@@ -572,7 +573,13 @@ estudio que queremos llevar a cabo, en particular queremos eliminar:
     `speed` y `type`.
 
 ```{r }
+flights <- flights %>%
+  select(-time_hour, -ends_with("time"))
+planes <- planes %>%
+  select(-speed, -type)
 
+names(flights)
+names(planes)
 ```
 
 ### Ejercicio 10
