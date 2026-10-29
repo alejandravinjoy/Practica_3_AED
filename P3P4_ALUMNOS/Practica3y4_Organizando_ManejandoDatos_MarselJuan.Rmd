@@ -285,7 +285,7 @@ Obtén la versión _tidy_ del conjunto de datos `weather` utilizando las funcion
 
 ```{r}
 #Primer paso: juntar todos los dias en una variable 'dia'
-raw_tidy4<-pivot_longer(raw,names_to = 'day',values_to ='temp' ,col=d1:d31,values_drop_na = TRUE)
+raw_tidy4<-pivot_longer(raw,names_to = 'day',values_to ='temp' ,col=d1:d31,names_prefix='d',values_drop_na = TRUE)
 
 #Segundo paso: Separar la columna ' element' en dos columnas ' tmax' y 'tmin'
 raw_tidy4<-pivot_wider(raw_tidy4,names_from = 'element',values_from = 'temp')
@@ -293,6 +293,10 @@ raw_tidy4<-pivot_wider(raw_tidy4,names_from = 'element',values_from = 'temp')
 #Tercer paso: columna fecha
 raw_tidy4<-unite(raw_tidy4,fecha,year,month,day,sep='/')
 
+#Unificado
+raw%>%pivot_longer(.,names_to = 'day',values_to ='temp' ,col=d1:d31,names_prefix='d',values_drop_na = TRUE)%>%
+  pivot_wider(.,names_from = 'element',values_from = 'temp')%>%
+  unite(.,fecha,year,month,day,sep='/')
 ```
 
 
