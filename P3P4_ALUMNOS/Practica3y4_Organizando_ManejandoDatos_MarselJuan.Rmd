@@ -592,7 +592,11 @@ que permita conseguir este propósito. Elimina las variables originales
 involucradas en la creación de la nueva variable.
 
 ```{r }
+library(dplyr)
+library(tidyr)
 
+flights <- flights %>%
+  unite("Full_Date", day, month, year.x, sep = "-", remove = TRUE)
 
 ```
 
@@ -608,7 +612,14 @@ operador pipe para enlazar las funciones. Almacena el data frame en una
 variable denominada `Distances_plane`.
 
 ```{r }
-
+Distances_plane <- flights %>%
+  filter(!is.na(tailnum)) %>%
+  group_by(tailnum) %>%
+  summarise(
+    Num_flights = n(),
+    Mean_distance = mean(distance, na.rm = TRUE),
+    Total_distance = sum(distance, na.rm = TRUE)
+  )
 ```
 
 # Ejercicios Extra
